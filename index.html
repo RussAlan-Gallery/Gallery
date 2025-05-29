@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dynamic Drive Gallery</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <h2>Photo Gallery</h2>
+  <div id="gallery"></div>
+
+  <script>
+    const folderId = "68377465-8eb4-8013-a2a7-25e7c39fdb1d";
+    const apiKey = "AIzaSyCEK4ghcQttTFDakyZKDt_2GMixn_Cqk5k";
+
+    async function fetchImages() {
+      const endpoint = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+mimeType+contains+'image/'+and+trashed=false&key=${apiKey}&fields=files(id,name)`;
+
+      try {
+        const res = await fetch(endpoint);
+        const data = await res.json();
+
+        const gallery = document.getElementById("gallery");
+        data.files.forEach(file => {
+          const img = document.createElement("img");
+          img.src = `https://drive.google.com/uc?export=view&id=${file.id}`;
+          img.alt = file.name;
+          gallery.appendChild(img);
+        });
+      } catch (error) {
+        console.error("Error loading images:", error);
+      }
+    }
+
+    fetchImages();
+  </script>
+</body>
+</html>
